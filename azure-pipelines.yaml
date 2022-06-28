@@ -41,6 +41,20 @@ variables:
     value: ""
 
 stages:
+  - stage: pre-commit
+    jobs:
+    - job: pre
+      pool:
+        vmImage: ${{ variables.agentPool }}
+      steps:
+      - task: Bash@3
+        displayName: 'Install pre commit'
+        inputs:
+          script: |
+            pip install pre-commit
+            pre-commit install
+            pre-commit run --all-files
+
   - stage: Precheck
     jobs:
       - job: Validate
