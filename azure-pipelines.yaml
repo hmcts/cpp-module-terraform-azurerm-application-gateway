@@ -47,9 +47,10 @@ stages:
       pool:
         vmImage: ${{ variables.agentPool }}
       steps:
-      - task: Bash@3
+      - task: CmdLine@2
         displayName: 'Install pre commit'
         inputs:
+          targetType: 'inline'
           script: |
             pip install pre-commit
             pre-commit install
