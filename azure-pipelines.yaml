@@ -53,8 +53,9 @@ stages:
           targetType: 'inline'
           script: |
             curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-            wget -O pre-commit.pyz https://github.com/pre-commit/pre-commit/releases/download/v2.19.0/pre-commit-2.19.0.pyz
-            python3 pre-commit.pyz install
+            apt-get -qq -y update
+            apt-get -qq -y install pre-commit
+            pre-commit install
             pre-commit run --all-files
 
   - stage: Precheck
