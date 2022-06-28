@@ -41,7 +41,7 @@ variables:
     value: ""
 
 stages:
-  - stage: pre-commit
+  - stage: precommit
     jobs:
     - job: pre
       pool:
