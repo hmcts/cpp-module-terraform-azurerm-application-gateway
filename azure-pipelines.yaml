@@ -53,8 +53,7 @@ stages:
           targetType: 'inline'
           script: |
             curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-            sudo apt-get -qq -y update
-            sudo apt-get -qq -y install pre-commit
+            sudo sudo snap install pre-commit --classic
             pre-commit install
             pre-commit run --all-files
 
