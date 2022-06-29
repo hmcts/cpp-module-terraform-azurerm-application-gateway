@@ -1,6 +1,6 @@
 terraform {
 
-  required_version = ">=0.14"
+  required_version = ">=1.2.0"
 
   required_providers {
     azurerm = {
@@ -11,6 +11,5 @@ terraform {
 }
 
 provider "azurerm" {
-  subscription_id = "8cdb5405-7535-4349-92e9-f52bddc7833a"
   features {}
 }
