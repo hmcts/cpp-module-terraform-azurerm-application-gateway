@@ -30,7 +30,7 @@ variables:
   - name: timeoutInMinutes
     value: "60"
   - name: agentPool
-    value: "ubuntu-18.04"
+    value: "ubuntu-latest"
   - name: build
     value: $(Build.BuildNumber)
   - name: isMaster
@@ -51,9 +51,12 @@ stages:
         displayName: Terraform install
         inputs:
           terraformVersion: ${{ variables.tfversion }}
+      - task: CmdLine@2
+        displayName: 'Install pre commit'
+        inputs:
           targetType: 'inline'
           script: |
             curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-            sudo sudo snap install pre-commit --classic
-            pre-commit install
+            python3 -m pip install --upgrade pip
+            pip3 install pre-commit
             pre-commit run --all-files
