@@ -47,6 +47,11 @@ stages:
       pool:
         vmImage: ${{ variables.agentPool }}
       steps:
+      - task: TerraformInstaller@0
+        displayName: Terraform install
+        inputs:
+          terraformVersion: ${{ variables.tfversion }}
+
       - task: CmdLine@2
         displayName: 'Install pre commit'
         inputs:
