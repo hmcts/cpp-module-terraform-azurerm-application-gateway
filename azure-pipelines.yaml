@@ -1,0 +1,62 @@
+name: CPP Azure Application Gateway
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+
+parameters:
+  - name: components
+    displayName: Component to Run
+    type: object
+    default:
+      - deployment: "backendappgateway"
+        environment: "dev"
+        dependsOn: "Precheck"
+
+  - name: location
+    displayName: Location
+    type: string
+    default: "UK South"
+    values:
+      - "UK South"
+      - "UK West"
+
+variables:
+  - name: tfversion
+    value: 1.2.3
+  - name: project
+    value: application
+  - name: timeoutInMinutes
+    value: "60"
+  - name: agentPool
+    value: "ubuntu-latest"
+  - name: build
+    value: $(Build.BuildNumber)
+  - name: isMaster
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+  - name: product
+    value: "cpp-platform"
+  - name: tfInitSub
+    value: ""
+
+stages:
+  - stage: precommit
+    jobs:
+    - job: pre
+      pool:
+        vmImage: ${{ variables.agentPool }}
+      steps:
+      - task: TerraformInstaller@0
+        displayName: Terraform install
+        inputs:
+          terraformVersion: ${{ variables.tfversion }}
+      - task: CmdLine@2
+        displayName: 'Run pre-commit static analysis'
+        inputs:
+          targetType: 'inline'
+          script: |
+            curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+            python3 -m pip install --upgrade pip
+            pip3 install pre-commit
+            pre-commit run --all-files
