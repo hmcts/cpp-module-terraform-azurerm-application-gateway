@@ -26,7 +26,7 @@ module "todo_resource_name" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_null"></a> [null](#provider\_null) | 3.1.1 |
+| <a name="provider_null"></a> [null](#provider\_null) | >= 3.1.1 |
 
 ## Resources
 
