@@ -39,6 +39,10 @@ variables:
     value: "cpp-platform"
   - name: tfInitSub
     value: ""
+  - name: known_host
+    value: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl'
+  - name: sshPublicKey
+    value: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWDD02rMMYFCFXI8+6X+8TLkKqpsikk04TMVrRI2myS nicholas.suckling@hmcts.net'
 
 stages:
   - stage: precommit
@@ -68,10 +72,15 @@ stages:
         vmImage: ubuntu-latest
       steps:
       - checkout: self
+      - task: InstallSSHKey@0
+        inputs:
+          knownHostsEntry: $(known_host)
+          sshPublicKey: $(sshPublicKey)
+          sshKeySecureFile: id_hmcts_ed25519
       - task: TerraformInstaller@0
         displayName: Install Terraform latest
       - task: TerraformTaskV3@3
-        displayName: 'Terraform : Install'
+        displayName: 'Terraform : Init'
         inputs:
           backendServiceArm: 6fe3b7e1-ee79-4628-a0cc-cb4c79fbb4b0
           backendAzureRmResourceGroupName: RG-POC-TF-STATE
