@@ -60,3 +60,31 @@ stages:
             python3 -m pip install --upgrade pip
             pip3 install pre-commit
             pre-commit run --all-files
+  - stage: terraforminit
+    jobs:
+    - job: Job_1
+      displayName: Agent-Terraform
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+      - checkout: self
+      - task: TerraformInstaller@0
+        displayName: Install Terraform latest
+      - task: TerraformTaskV3@3
+        displayName: 'Terraform : azurerm'
+        inputs:
+          backendServiceArm: 6fe3b7e1-ee79-4628-a0cc-cb4c79fbb4b0
+          backendAzureRmResourceGroupName: RG-POC-TF-STATE
+          backendAzureRmStorageAccountName: satfpocstate
+          backendAzureRmContainerName: tfpoc-remote-state
+          backendAzureRmKey: cpp-module-application-gateway
+      - task: TerraformTaskV3@3
+        displayName: 'Terraform : azurerm'
+        inputs:
+          command: plan
+          environmentServiceNameAzureRM: 6fe3b7e1-ee79-4628-a0cc-cb4c79fbb4b0
+          backendServiceArm: 6fe3b7e1-ee79-4628-a0cc-cb4c79fbb4b0
+          backendAzureRmResourceGroupName: RG-POC-TF-STATE
+          backendAzureRmStorageAccountName: satfpocstate
+          backendAzureRmContainerName: tfpoc-remote-state
+          backendAzureRmKey: cpp-module-application-gateway
