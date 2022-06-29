@@ -51,25 +51,9 @@ stages:
         displayName: Terraform install
         inputs:
           terraformVersion: ${{ variables.tfversion }}
-
-      - task: CmdLine@2
-        displayName: 'Install pre commit'
-        inputs:
           targetType: 'inline'
           script: |
             curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
             sudo sudo snap install pre-commit --classic
             pre-commit install
             pre-commit run --all-files
-
-  - stage: Precheck
-    jobs:
-      - job: Validate
-        timeoutInMinutes: ${{ variables.timeoutInMinutes }}
-        pool:
-          vmImage: ${{ variables.agentPool }}
-        steps:
-          - task: TerraformInstaller@0
-            displayName: Terraform install
-            inputs:
-              terraformVersion: ${{ variables.tfversion }}
