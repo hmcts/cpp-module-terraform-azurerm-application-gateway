@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "rg1" {
 }
 
 module "tag_set" {
-  source         = "git::git@github.com:hmcts/cpp-terraform-tag-generator.git?ref=master"
+  source         = "github.com/hmcts/cpp-terraform-tag-generator"
   namespace      = var.namespace
   application    = var.application
   costcode       = var.costcode
