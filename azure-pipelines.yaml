@@ -52,7 +52,7 @@ stages:
         inputs:
           terraformVersion: ${{ variables.tfversion }}
       - task: CmdLine@2
-        displayName: 'Install pre commit'
+        displayName: 'Run pre-commit static analysis'
         inputs:
           targetType: 'inline'
           script: |
