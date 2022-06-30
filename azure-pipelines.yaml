@@ -89,17 +89,9 @@ stages:
         inputs:
           environmentServiceNameAzureRM: 'HMCTS Non-Live'
           backendServiceArm: 'HMCTS Non-Live'
-          backendAzureRmResourceGroupName: RG-POC-TF-STATE
-          backendAzureRmStorageAccountName: satfpocstate
-          backendAzureRmContainerName: tfpoc-remote-state
-          backendAzureRmKey: cpp-module-application-gateway
       - task: TerraformTaskV3@3
         displayName: 'Terraform : Plan'
         inputs:
           command: plan
           environmentServiceNameAzureRM: 'HMCTS Non-Live'
           backendServiceArm: 'HMCTS Non-Live'
-          backendAzureRmResourceGroupName: RG-POC-TF-STATE
-          backendAzureRmStorageAccountName: satfpocstate
-          backendAzureRmContainerName: tfpoc-remote-state
-          backendAzureRmKey: cpp-module-application-gateway
