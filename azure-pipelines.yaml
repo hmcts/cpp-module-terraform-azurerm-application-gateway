@@ -51,6 +51,11 @@ stages:
       pool:
         vmImage: ${{ variables.agentPool }}
       steps:
+      - task: InstallSSHKey@0
+        inputs:
+          knownHostsEntry: $(known_host)
+          sshPublicKey: $(sshPublicKey)
+          sshKeySecureFile: id_hmcts_ed25519
       - task: TerraformInstaller@0
         displayName: Terraform install
         inputs:
