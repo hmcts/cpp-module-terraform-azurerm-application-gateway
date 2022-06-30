@@ -97,6 +97,7 @@ stages:
         inputs:
           command: plan
           environmentServiceNameAzureRM: 'HMCTS Non-Live'
+          backendServiceArm: 'HMCTS Non-Live'
           backendAzureRmResourceGroupName: RG-POC-TF-STATE
           backendAzureRmStorageAccountName: satfpocstate
           backendAzureRmContainerName: tfpoc-remote-state
