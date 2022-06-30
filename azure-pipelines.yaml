@@ -89,9 +89,17 @@ stages:
         inputs:
           environmentServiceNameAzureRM: 'HMCTS Non-Live'
           backendServiceArm: 'HMCTS Non-Live'
+          backendAzureRmResourceGroupName: Terraform-Modules-State
+          backendAzureRmStorageAccountName: terraformmodulestate
+          backendAzureRmContainerName: tfmodules-remote-state
+          backendAzureRmKey: cpp-module-azure-gateway
       - task: TerraformTaskV3@3
         displayName: 'Terraform : Plan'
         inputs:
           command: plan
           environmentServiceNameAzureRM: 'HMCTS Non-Live'
           backendServiceArm: 'HMCTS Non-Live'
+          backendAzureRmResourceGroupName: Terraform-Modules-State
+          backendAzureRmStorageAccountName: terraformmodulestate
+          backendAzureRmContainerName: tfmodules-remote-state
+          backendAzureRmKey: cpp-module-azure-gateway
