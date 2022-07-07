@@ -1,12 +1,12 @@
 module "appgw_terratest" {
-  source           = "../"
+  source                        = "../../"
   frontend_resource_group_name  = var.frontend_resource_group_name
   frontend_virtual_network_name = var.frontend_virtual_network_name
   frontend_address_prefixes     = var.frontend_address_prefixes
   backend_resource_group_name   = var.backend_resource_group_name
   backend_virtual_network_name  = var.backend_virtual_network_name
   backend_address_prefixes      = var.backend_address_prefixes
-  
+
   namespace   = var.namespace
   costcode    = var.costcode
   attribute   = var.attribute
@@ -15,7 +15,6 @@ module "appgw_terratest" {
   application = var.application
 }
 
-
 resource "random_password" "password" {
   length  = 16
   special = true
@@ -23,6 +22,27 @@ resource "random_password" "password" {
   upper   = true
   number  = true
 }
+
+resource "azurerm_network_interface" "nic" {
+  count               = 2
+  name                = "nic-${count.index + 1}"
+  location            = var.region
+  resource_group_name = "${module.tag_set.id}-resource_group"
+
+  ip_configuration {
+    name                          = "nic-ipconfig-${count.index + 1}"
+    subnet_id                     = azurerm_subnet.backend.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "nic-assoc01" {
+  count                   = 2
+  network_interface_id    = azurerm_network_interface.nic[count.index].id
+  ip_configuration_name   = "nic-ipconfig-${count.index + 1}"
+  backend_address_pool_id = azurerm_application_gateway.app_gateway.backend_address_pool[0].id
+}
+
 
 resource "azurerm_windows_virtual_machine" "vm" {
   count               = 2

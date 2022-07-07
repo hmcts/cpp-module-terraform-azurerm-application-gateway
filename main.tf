@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "rg1" {
 }
 
 module "tag_set" {
-  source         = "git::git@github.com:hmcts/cpp-module-terraform-azurerm-tag-generator.git?ref=master" */
+  source         = "git::git@github.com:hmcts/cpp-module-terraform-azurerm-tag-generator.git?ref=master"
   namespace      = var.namespace
   application    = var.application
   costcode       = var.costcode
@@ -92,22 +92,4 @@ resource "azurerm_application_gateway" "app_gateway" {
   }
 }
 
-resource "azurerm_network_interface" "nic" {
-  count               = 2
-  name                = "nic-${count.index + 1}"
-  location            = azurerm_resource_group.rg1.location
-  resource_group_name = azurerm_resource_group.rg1.name
 
-  ip_configuration {
-    name                          = "nic-ipconfig-${count.index + 1}"
-    subnet_id                     = azurerm_subnet.backend.id
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-
-resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "nic-assoc01" {
-  count                   = 2
-  network_interface_id    = azurerm_network_interface.nic[count.index].id
-  ip_configuration_name   = "nic-ipconfig-${count.index + 1}"
-  backend_address_pool_id = azurerm_application_gateway.app_gateway.backend_address_pool[0].id
-}
