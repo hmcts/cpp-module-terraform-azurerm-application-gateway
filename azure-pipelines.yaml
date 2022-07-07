@@ -69,40 +69,6 @@ stages:
             python3 -m pip install --upgrade pip
             pip3 install pre-commit
             pre-commit run --all-files
-  - stage: terraformplan
-    jobs:
-    - job: Job_1
-      displayName: Terraform-Plan
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-      - checkout: self
-      - task: InstallSSHKey@0
-        inputs:
-          knownHostsEntry: $(known_host)
-          sshPublicKey: $(sshPublicKey)
-          sshKeySecureFile: id_hmcts_ed25519
-      - task: TerraformInstaller@0
-        displayName: Install Terraform latest
-      - task: TerraformTaskV3@3
-        displayName: 'Terraform : Init'
-        inputs:
-          environmentServiceNameAzureRM: 'HMCTS Non-Live'
-          backendServiceArm: 'HMCTS Non-Live'
-          backendAzureRmResourceGroupName: Terraform-Modules-State
-          backendAzureRmStorageAccountName: terraformmodulestate
-          backendAzureRmContainerName: tfmodules-remote-state
-          backendAzureRmKey: cpp-module-azure-gateway
-      - task: TerraformTaskV3@3
-        displayName: 'Terraform : Plan'
-        inputs:
-          command: plan
-          environmentServiceNameAzureRM: 'HMCTS Non-Live'
-          backendServiceArm: 'HMCTS Non-Live'
-          backendAzureRmResourceGroupName: Terraform-Modules-State
-          backendAzureRmStorageAccountName: terraformmodulestate
-          backendAzureRmContainerName: tfmodules-remote-state
-          backendAzureRmKey: cpp-module-azure-gateway
   - stage: terratest
     jobs:
     - job:
@@ -132,4 +98,4 @@ stages:
               go mod init github.com/hmcts/cpp-module-terraform-azurerm-application-gateway
               go mod tidy
               cd tests/terratest
-              go test -v -timeout 30m pre_test.go
+              go test -v -timeout 30m appgw_test.go
