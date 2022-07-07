@@ -13,6 +13,7 @@ module "appgw_terratest" {
   owner       = var.owner
   environment = var.environment
   application = var.application
+  type        = var.type
 }
 
 resource "random_password" "password" {
@@ -27,11 +28,11 @@ resource "azurerm_network_interface" "nic" {
   count               = 2
   name                = "nic-${count.index + 1}"
   location            = var.region
-  resource_group_name = "${module.tag_set.id}-resource_group"
+  resource_group_name = "${var.namespace}-${var.application}-${var.environment}-${var.type}-resource_group"
 
   ip_configuration {
     name                          = "nic-ipconfig-${count.index + 1}"
-    subnet_id                     = azurerm_subnet.backend.id
+    subnet_id                     = module.appgw_terratest.backend_subnet_id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -40,7 +41,7 @@ resource "azurerm_network_interface_application_gateway_backend_address_pool_ass
   count                   = 2
   network_interface_id    = azurerm_network_interface.nic[count.index].id
   ip_configuration_name   = "nic-ipconfig-${count.index + 1}"
-  backend_address_pool_id = azurerm_application_gateway.app_gateway.backend_address_pool[0].id
+  backend_address_pool_id = module.appgw_terratest.backend_address_pool_id
 }
 
 

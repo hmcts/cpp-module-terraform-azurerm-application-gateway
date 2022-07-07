@@ -12,7 +12,7 @@ module "tag_set" {
   version_number = var.version_number
   attribute      = var.attribute
   environment    = var.environment
-  type           = "app_gateway"
+  type           = var.type
 }
 
 resource "azurerm_subnet" "frontend" {
@@ -91,5 +91,3 @@ resource "azurerm_application_gateway" "app_gateway" {
     priority                   = 1
   }
 }
-
-
