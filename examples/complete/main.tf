@@ -21,7 +21,7 @@ resource "random_password" "password" {
   special = true
   lower   = true
   upper   = true
-  number  = true
+  numeric = true
 }
 
 resource "azurerm_network_interface" "nic" {
