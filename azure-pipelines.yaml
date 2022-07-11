@@ -93,7 +93,7 @@ stages:
         - task: AzureCLI@2
           displayName: Azure CLI
           inputs:
-            azureSubscription: $(serviceConnection)
+            azureSubscription: $(ARM_CLIENT_ID)
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
