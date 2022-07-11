@@ -6,6 +6,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -21,6 +22,19 @@ func TestTerraformAzureAppGW(t *testing.T) {
 	planFilePath := filepath.Join(exampleFolder, "plan.out")
 
 	expectedAppGatewayName := "cpp-atlassian-nonlive-app_gateway-appgw"
+
+	// getting enVars from environment variables
+	ARM_CLIENT_ID := os.Getenv("ARM_CLIENT_ID")
+	ARM_CLIENT_SECRET := os.Getenv("ARM_CLIENT_SECRET")
+	ARM_SUBSCRIPTION_ID := os.Getenv("ARM_SUBSCRIPTION_ID")
+	ARM_TENANT_ID := os.Getenv("ARM_TENANT_ID")
+
+	if ARM_CLIENT_ID != "" {
+		globalEnvVars["ARM_CLIENT_ID"] = ARM_CLIENT_ID
+		globalEnvVars["ARM_CLIENT_SECRET"] = ARM_CLIENT_SECRET
+		globalEnvVars["ARM_SUBSCRIPTION_ID"] = ARM_SUBSCRIPTION_ID
+		globalEnvVars["ARM_TENANT_ID"] = ARM_TENANT_ID
+	}
 
 	terraformPlanOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		// The path to where our Terraform code is located

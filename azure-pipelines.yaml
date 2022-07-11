@@ -97,3 +97,6 @@ stages:
               go test -v -timeout 30m appgw_test.go
           env:
             ARM_CLIENT_SECRET: $(lab-ado-princple-secret)
+            ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+            ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+            ARM_TENANT_ID: $(ARM_TENANT_ID)
