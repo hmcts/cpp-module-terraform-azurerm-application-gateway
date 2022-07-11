@@ -84,17 +84,13 @@ stages:
           displayName: 'Use Go 1.18.3'
           inputs:
             version: 1.18.3
-        - task: CmdLine@2
+        - task: AzureCLI@2
           displayName: 'Terratest'
           inputs:
-            environmentServiceNameAzureRM: 'HMCTS Non-Live'
-            backendServiceArm: 'Non-Live-Lab'
-            backendAzureRmResourceGroupName: Terraform-Modules-State
-            backendAzureRmStorageAccountName: terraformmodulestate
-            backendAzureRmContainerName: tfmodules-remote-state
-            backendAzureRmKey: cpp-module-azure-gateway
-            targetType: 'inline'
-            script: |
+            azureSubscription: 'Non-Live-lab'
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
               go mod init github.com/hmcts/cpp-module-terraform-azurerm-application-gateway
               go mod tidy
               cd tests/terratest
