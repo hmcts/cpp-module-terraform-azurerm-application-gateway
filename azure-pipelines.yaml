@@ -90,6 +90,19 @@ stages:
           displayName: 'Install Terraform tooling'
           inputs:
             terraformVersion: ${{ variables.tfversion }}
+        - task: AzureCLI@2
+          displayName: Azure CLI
+          inputs:
+            azureSubscription: $(serviceConnection)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              az login --service-principal --username $(ARM_CLIENT_ID) --password $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)
+          env:
+            ARM_CLIENT_SECRET: $(lab-ado-princple-secret)
+            ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+            ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+            ARM_TENANT_ID: $(ARM_TENANT_ID)
         - bash: |
               env
               go mod init github.com/hmcts/cpp-module-terraform-azurerm-application-gateway
