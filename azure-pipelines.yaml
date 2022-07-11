@@ -92,10 +92,10 @@ stages:
             terraformVersion: ${{ variables.tfversion }}
         - bash: |
               env
-              # go mod init github.com/hmcts/cpp-module-terraform-azurerm-application-gateway
-              # go mod tidy
-              # cd tests/terratest
-              # go test -v -timeout 30m appgw_test.go
+              go mod init github.com/hmcts/cpp-module-terraform-azurerm-application-gateway
+              go mod tidy
+              cd tests/terratest
+              go test -v -timeout 30m appgw_test.go
           env:
             ARM_CLIENT_SECRET: $(lab-ado-princple-secret)
             ARM_CLIENT_ID: $(ARM_CLIENT_ID)
