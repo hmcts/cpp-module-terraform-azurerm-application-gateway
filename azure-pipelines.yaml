@@ -71,7 +71,7 @@ stages:
             pre-commit run --all-files
   - stage: terratest
     jobs:
-    - job:
+    - job: terratest
       pool:
         vmImage: ${{ variables.agentPool }}
       steps:
