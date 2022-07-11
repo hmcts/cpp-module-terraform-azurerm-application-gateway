@@ -23,6 +23,8 @@ parameters:
       - "UK West"
 
 variables:
+  - group: terratest-app-registration
+  - group: Vault_Secrets_Lab
   - name: tfversion
     value: 1.2.3
   - name: project
@@ -84,18 +86,14 @@ stages:
           displayName: 'Use Go 1.18.3'
           inputs:
             version: 1.18.3
-        - task: AzureCLI@2
-          displayName: 'Terratest'
+        - task: TerraformInstaller@0
+          displayName: 'Install Terraform tooling'
           inputs:
-            azureSubscription: 'Non-Live-lab'
-            ARM_CLIENT_ID: 8cdb5405-7535-4349-92e9-f52bddc7833a
-            ARM_CLIENT_SECRET: lab-ado-princple-secret
-            ARM_CLIENT_TENANT_ID: e2995d11-9947-4e78-9de6-d44e0603518e
-            scriptType: bash
-            scriptLocation: inlineScript
-            inlineScript: |
-              az login --service-principal --username $(ARM_CLIENT_ID) --password $(ARM_CLIENT_SECRET) --tenant $(ARM_CLIENT_TENANT_ID)
+            terraformVersion: ${{ variables.tfversion }}
+        - bash: |
               go mod init github.com/hmcts/cpp-module-terraform-azurerm-application-gateway
               go mod tidy
               cd tests/terratest
               go test -v -timeout 30m appgw_test.go
+          env:
+            ARM_CLIENT_SECRET: $(lab-ado-princple-secret)
