@@ -23,6 +23,8 @@ parameters:
       - "UK West"
 
 variables:
+  - group: terratest-app-registration
+  - group: Vault_Secrets_Lab
   - name: tfversion
     value: 1.2.3
   - name: project
@@ -69,43 +71,9 @@ stages:
             python3 -m pip install --upgrade pip
             pip3 install pre-commit
             pre-commit run --all-files
-  - stage: terraformplan
-    jobs:
-    - job: Job_1
-      displayName: Terraform-Plan
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-      - checkout: self
-      - task: InstallSSHKey@0
-        inputs:
-          knownHostsEntry: $(known_host)
-          sshPublicKey: $(sshPublicKey)
-          sshKeySecureFile: id_hmcts_ed25519
-      - task: TerraformInstaller@0
-        displayName: Install Terraform latest
-      - task: TerraformTaskV3@3
-        displayName: 'Terraform : Init'
-        inputs:
-          environmentServiceNameAzureRM: 'HMCTS Non-Live'
-          backendServiceArm: 'HMCTS Non-Live'
-          backendAzureRmResourceGroupName: Terraform-Modules-State
-          backendAzureRmStorageAccountName: terraformmodulestate
-          backendAzureRmContainerName: tfmodules-remote-state
-          backendAzureRmKey: cpp-module-azure-gateway
-      - task: TerraformTaskV3@3
-        displayName: 'Terraform : Plan'
-        inputs:
-          command: plan
-          environmentServiceNameAzureRM: 'HMCTS Non-Live'
-          backendServiceArm: 'HMCTS Non-Live'
-          backendAzureRmResourceGroupName: Terraform-Modules-State
-          backendAzureRmStorageAccountName: terraformmodulestate
-          backendAzureRmContainerName: tfmodules-remote-state
-          backendAzureRmKey: cpp-module-azure-gateway
   - stage: terratest
     jobs:
-    - job:
+    - job: terratest
       pool:
         vmImage: ${{ variables.agentPool }}
       steps:
@@ -118,18 +86,35 @@ stages:
           displayName: 'Use Go 1.18.3'
           inputs:
             version: 1.18.3
-        - task: CmdLine@2
-          displayName: 'Terratest'
+        - task: TerraformInstaller@0
+          displayName: 'Install Terraform tooling'
           inputs:
-            environmentServiceNameAzureRM: 'HMCTS Non-Live'
-            backendServiceArm: 'HMCTS Non-Live'
-            backendAzureRmResourceGroupName: Terraform-Modules-State
-            backendAzureRmStorageAccountName: terraformmodulestate
-            backendAzureRmContainerName: tfmodules-remote-state
-            backendAzureRmKey: cpp-module-azure-gateway
+            terraformVersion: ${{ variables.tfversion }}
+        - task: AzureCLI@2
+          displayName: Azure CLI
+          inputs:
+            azureSubscription: 'ado_nonlive_service_principal_lab'
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              az login --service-principal --username $(ARM_CLIENT_ID) --password $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)
+              az account show
+          env:
+            ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+            ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+            ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+            ARM_TENANT_ID: $(ARM_TENANT_ID)
+        - task: CmdLine@2
+          displayName: 'Terratest unit/integration test'
+          inputs:
             targetType: 'inline'
             script: |
               go mod init github.com/hmcts/cpp-module-terraform-azurerm-application-gateway
               go mod tidy
               cd tests/terratest
-              go test -v -timeout 30m pre_test.go
+              go test -v -timeout 30m appgw_test.go
+          env:
+            ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+            ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+            ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+            ARM_TENANT_ID: $(ARM_TENANT_ID)

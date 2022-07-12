@@ -92,7 +92,6 @@ variable "environment" {
   description = "Environment into which resource is deployed"
   default     = ""
 }
-
 variable "type" {
   type        = string
   description = "Name of service type"
