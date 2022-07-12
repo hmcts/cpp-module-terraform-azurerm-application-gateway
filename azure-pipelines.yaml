@@ -104,8 +104,11 @@ stages:
             ARM_CLIENT_ID: $(ARM_CLIENT_ID)
             ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
             ARM_TENANT_ID: $(ARM_TENANT_ID)
-        - bash: |
-              env
+        - task: CmdLine@2
+          displayName: 'Terratest unit/integration test'
+          inputs:
+            targetType: 'inline'
+            script: |
               go mod init github.com/hmcts/cpp-module-terraform-azurerm-application-gateway
               go mod tidy
               cd tests/terratest
