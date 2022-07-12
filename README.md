@@ -61,3 +61,17 @@ rements
 | <a name="output_backend_address_pool_id"></a> [backend\_address\_pool\_id](#output\_backend\_address\_pool\_id) | The backend address pool id |
 | <a name="output_backend_subnet_id"></a> [backend\_subnet\_id](#output\_backend\_subnet\_id) | The backend subnet id |
 <!-- END_TF_DOCS -->
+## Contributing
+
+We use pre-commit hooks for validating the terraform format and maintaining the documentation automatically.
+Install it with:
+
+```shell
+$ brew install pre-commit terraform-docs
+$ pre-commit install
+```
+
+If you add a new hook make sure to run it against all files:
+```shell
+$ pre-commit run --all-files
+```
