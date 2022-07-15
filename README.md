@@ -7,13 +7,13 @@ rements
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.2.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | =2.99.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | =3.14.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | =2.99.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | =3.14.0 |
 
 ## Modules
 
@@ -25,11 +25,11 @@ rements
 
 | Name | Type |
 |------|------|
-| [azurerm_application_gateway.app_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/2.99.0/docs/resources/application_gateway) | resource |
-| [azurerm_public_ip.pip1](https://registry.terraform.io/providers/hashicorp/azurerm/2.99.0/docs/resources/public_ip) | resource |
-| [azurerm_resource_group.rg1](https://registry.terraform.io/providers/hashicorp/azurerm/2.99.0/docs/resources/resource_group) | resource |
-| [azurerm_subnet.backend](https://registry.terraform.io/providers/hashicorp/azurerm/2.99.0/docs/resources/subnet) | resource |
-| [azurerm_subnet.frontend](https://registry.terraform.io/providers/hashicorp/azurerm/2.99.0/docs/resources/subnet) | resource |
+| [azurerm_application_gateway.app_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/3.14.0/docs/resources/application_gateway) | resource |
+| [azurerm_public_ip.pip1](https://registry.terraform.io/providers/hashicorp/azurerm/3.14.0/docs/resources/public_ip) | resource |
+| [azurerm_resource_group.rg1](https://registry.terraform.io/providers/hashicorp/azurerm/3.14.0/docs/resources/resource_group) | resource |
+| [azurerm_subnet.backend](https://registry.terraform.io/providers/hashicorp/azurerm/3.14.0/docs/resources/subnet) | resource |
+| [azurerm_subnet.frontend](https://registry.terraform.io/providers/hashicorp/azurerm/3.14.0/docs/resources/subnet) | resource |
 
 ## Inputs
 
