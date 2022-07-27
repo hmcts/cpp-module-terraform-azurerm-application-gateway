@@ -19,7 +19,7 @@ rements
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_tag_set"></a> [tag\_set](#module\_tag\_set) | git::git@github.com:hmcts/cpp-module-terraform-azurerm-tag-generator.git | master |
+| <a name="module_tag_set"></a> [tag\_set](#module\_tag\_set) | git::https://github.com/hmcts/cpp-module-terraform-azurerm-tag-generator.git | main |
 
 ## Resources
 

@@ -1,120 +1,20 @@
 name: CPP Azure Application Gateway
-trigger:
-  batch: true
-  branches:
-    include:
-      - master
+trigger: none
+pr:
+- main
 
-parameters:
-  - name: components
-    displayName: Component to Run
-    type: object
-    default:
-      - deployment: "backendappgateway"
-        environment: "dev"
-        dependsOn: "Precheck"
+resources:
+  repositories:
+  - repository: cppAzureDevOpsTemplates
+    type: github
+    name: hmcts/cpp-azure-devops-templates
+    endpoint: 'cpp-apps'
 
-  - name: location
-    displayName: Location
-    type: string
-    default: "UK South"
-    values:
-      - "UK South"
-      - "UK West"
-
-variables:
-  - group: terratest-app-registration
-  - group: Vault_Secrets_Lab
-  - name: tfversion
-    value: 1.2.3
-  - name: project
-    value: application
-  - name: timeoutInMinutes
-    value: "60"
-  - name: agentPool
-    value: "ubuntu-latest"
-  - name: build
-    value: $(Build.BuildNumber)
-  - name: isMaster
-    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
-  - name: product
-    value: "cpp-platform"
-  - name: tfInitSub
-    value: ""
-  - name: known_host
-    value: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl'
-  - name: sshPublicKey
-    value: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWDD02rMMYFCFXI8+6X+8TLkKqpsikk04TMVrRI2myS nicholas.suckling@hmcts.net'
-
-stages:
-  - stage: precommit
-    jobs:
-    - job: pre
-      pool:
-        vmImage: ${{ variables.agentPool }}
-      steps:
-      - task: InstallSSHKey@0
-        inputs:
-          knownHostsEntry: $(known_host)
-          sshPublicKey: $(sshPublicKey)
-          sshKeySecureFile: id_hmcts_ed25519
-      - task: TerraformInstaller@0
-        displayName: Terraform install
-        inputs:
-          terraformVersion: ${{ variables.tfversion }}
-      - task: CmdLine@2
-        displayName: 'Run pre-commit static analysis'
-        inputs:
-          targetType: 'inline'
-          script: |
-            curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-            python3 -m pip install --upgrade pip
-            pip3 install pre-commit
-            pre-commit run --all-files
-  - stage: terratest
-    jobs:
-    - job: terratest
-      pool:
-        vmImage: ${{ variables.agentPool }}
-      steps:
-        - task: InstallSSHKey@0
-          inputs:
-            knownHostsEntry: $(known_host)
-            sshPublicKey: $(sshPublicKey)
-            sshKeySecureFile: id_hmcts_ed25519
-        - task: GoTool@0
-          displayName: 'Use Go 1.18.3'
-          inputs:
-            version: 1.18.3
-        - task: TerraformInstaller@0
-          displayName: 'Install Terraform tooling'
-          inputs:
-            terraformVersion: ${{ variables.tfversion }}
-        - task: AzureCLI@2
-          displayName: Azure CLI
-          inputs:
-            azureSubscription: 'ado_nonlive_service_principal_lab'
-            scriptType: bash
-            scriptLocation: inlineScript
-            inlineScript: |
-              az login --service-principal --username $(ARM_CLIENT_ID) --password $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)
-              az account show
-          env:
-            ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-            ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-            ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-            ARM_TENANT_ID: $(ARM_TENANT_ID)
-        - task: CmdLine@2
-          displayName: 'Terratest unit/integration test'
-          inputs:
-            targetType: 'inline'
-            script: |
-              go mod init github.com/hmcts/cpp-module-terraform-azurerm-application-gateway
-              go mod tidy
-              cd tests/terratest
-              go test -v -timeout 30m appgw_test.go
-          env:
-            ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-            ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-            ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-            ARM_TENANT_ID: $(ARM_TENANT_ID)
+extends:
+  template: pipelines/terratest.yaml@cppAzureDevOpsTemplates
+  parameters:
+    agentPool: "ubuntu-latest"
+    spnCredentialsVarGroup: "terratest-app-registration"
+    azureServiceConnection: "ado_nonlive_service_principal_lab"
+    terratestTimeout: "30"
+    tfversion: 1.2.3
