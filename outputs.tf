@@ -20,5 +20,5 @@ output "backend_subnet_id" {
 
 output "backend_address_pool_id" {
   description = "The backend address pool id"
-  value       = azurerm_application_gateway.app_gateway.backend_address_pool[0].id
+  value       = azurerm_application_gateway.app_gateway.backend_address_pool.*.id
 }

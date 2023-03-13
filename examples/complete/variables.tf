@@ -97,3 +97,8 @@ variable "type" {
   description = "Name of service type"
   default     = ""
 }
+variable "zones" {
+  description = "A collection of availability zones to spread the Application Gateway over."
+  type        = list(string)
+  default     = [] #["1", "2", "3"]
+}

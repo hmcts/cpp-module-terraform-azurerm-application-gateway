@@ -46,6 +46,84 @@ variable "backend_address_prefixes" {
   description = "Address prefix for the backend CIDR ranges"
 }
 
+variable "sku" {
+  description = "The sku pricing model of v1 and v2"
+  type = object({
+    name     = string
+    tier     = string
+    capacity = optional(number)
+  })
+}
+
+variable "autoscale_configuration" {
+  description = "Minimum or Maximum capacity for autoscaling. Accepted values are for Minimum in the range 0 to 100 and for Maximum in the range 2 to 125"
+  type = object({
+    min_capacity = number
+    max_capacity = optional(number)
+  })
+  default = null
+}
+
+variable "enable_http2" {
+  description = "Is HTTP2 enabled on the application gateway resource?"
+  default     = false
+}
+
+variable "zones" {
+  description = "A collection of availability zones to spread the Application Gateway over."
+  type        = list(string)
+  default     = [] #["1", "2", "3"]
+}
+
+variable "firewall_policy_id" {
+  description = "The ID of the Web Application Firewall Policy which can be associated with app gateway"
+  default     = null
+}
+
+variable "ssl_policy" {
+  description = "Application Gateway SSL configuration"
+  type = object({
+    disabled_protocols   = optional(list(string))
+    policy_type          = optional(string)
+    policy_name          = optional(string)
+    cipher_suites        = optional(list(string))
+    min_protocol_version = optional(string)
+  })
+  default = null
+}
+
+variable "ssl_certificates" {
+  description = "List of SSL certificates data for Application gateway"
+  type = list(object({
+    name                = string
+    data                = optional(string)
+    password            = optional(string)
+    key_vault_secret_id = optional(string)
+  }))
+  default = []
+}
+
+variable "waf_configuration" {
+  description = "Web Application Firewall support for your Azure Application Gateway"
+  type = object({
+    firewall_mode            = string
+    rule_set_version         = string
+    file_upload_limit_mb     = optional(number)
+    request_body_check       = optional(bool)
+    max_request_body_size_kb = optional(number)
+    disabled_rule_group = optional(list(object({
+      rule_group_name = string
+      rules           = optional(list(string))
+    })))
+    exclusion = optional(list(object({
+      match_variable          = string
+      selector_match_operator = optional(string)
+      selector                = optional(string)
+    })))
+  })
+  default = null
+}
+
 
 ############
 # TAGGING  #
