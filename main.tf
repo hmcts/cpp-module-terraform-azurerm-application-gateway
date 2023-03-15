@@ -15,7 +15,7 @@ resource "azurerm_resource_group" "rg1" {
 
 # data "azurerm_virtual_network" "backend_virtual_network" {
 #   name                = var.virtual_network_name
-#   resource_group_name = var.backend_resource_group_name 
+#   resource_group_name = var.backend_resource_group_name
 # }
 # data "azurerm_subnet" "frontend_subnet" {
 #   virtual_network_name = data.azurerm_virtual_network.frontend_virtual_network.name
@@ -143,7 +143,7 @@ resource "azurerm_application_gateway" "app_gateway" {
       min_protocol_version = var.ssl_policy.min_protocol_version
     }
   }
-    #----------------------------------------------------------
+  #----------------------------------------------------------
   # SSL Certificate (.pfx) Configuration (Optional)
   #----------------------------------------------------------
   dynamic "ssl_certificate" {
