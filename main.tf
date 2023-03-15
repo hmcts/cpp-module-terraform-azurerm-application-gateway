@@ -2,7 +2,31 @@ resource "azurerm_resource_group" "rg1" {
   name     = "${module.tag_set.id}-resource_group"
   location = var.region
 }
+# data "azurerm_resource_group" "fe-rg" {
+#   name  = var.frontend_resource_group_name
+# }
+# data "azurerm_resource_group" "be-rg" {
+#   name  = var.backend_resource_group_name
+# }
+# data "azurerm_virtual_network" "frontend_virtual_network" {
+#   name                = var.virtual_network_name
+#   resource_group_name = var.frontend_resource_group_name
+# }
 
+# data "azurerm_virtual_network" "backend_virtual_network" {
+#   name                = var.virtual_network_name
+#   resource_group_name = var.backend_resource_group_name 
+# }
+# data "azurerm_subnet" "frontend_subnet" {
+#   virtual_network_name = data.azurerm_virtual_network.frontend_virtual_network.name
+#   resource_group_name  = data.azurerm_virtual_network.frontend_virtual_network.resource_group_name
+# }
+
+
+data "azurerm_subnet" "backend_subnet" {
+  virtual_network_name = data.azurerm_virtual_network.backend_virtual_network.name
+  resource_group_name  = data.azurerm_virtual_network.backend_virtual_network.resource_group_name
+}
 module "tag_set" {
   source         = "git::https://github.com/hmcts/cpp-module-terraform-azurerm-tag-generator.git?ref=main"
   namespace      = var.namespace
@@ -119,7 +143,45 @@ resource "azurerm_application_gateway" "app_gateway" {
       min_protocol_version = var.ssl_policy.min_protocol_version
     }
   }
+    #----------------------------------------------------------
+  # SSL Certificate (.pfx) Configuration (Optional)
+  #----------------------------------------------------------
+  dynamic "ssl_certificate" {
+    for_each = var.ssl_certificates
+    content {
+      name                = ssl_certificate.value.name
+      data                = ssl_certificate.value.key_vault_secret_id == null ? filebase64(ssl_certificate.value.data) : null
+      password            = ssl_certificate.value.key_vault_secret_id == null ? ssl_certificate.value.password : null
+      key_vault_secret_id = lookup(ssl_certificate.value, "key_vault_secret_id", null)
+    }
+  }
+  #----------------------------------------------------------
+  # Authentication SSL Certificate Configuration (Optional)
+  #----------------------------------------------------------
+  dynamic "authentication_certificate" {
+    for_each = var.authentication_certificates
+    content {
+      name = authentication_certificate.value.name
+      data = filebase64(authentication_certificate.value.data)
+    }
+  }
 
+  #----------------------------------------------------------
+  # Trusted Root SSL Certificate Configuration (Optional)
+  #----------------------------------------------------------
+  dynamic "trusted_root_certificate" {
+    for_each = var.trusted_root_certificates
+    content {
+      name = trusted_root_certificate.value.name
+      data = filebase64(trusted_root_certificate.value.data)
+    }
+  }
+
+
+  #----------------------------------------------------------
+  # Web application Firewall (WAF) configuration (Optional)
+  # Tier to be either “WAF” or “WAF V2”
+  #----------------------------------------------------------
   dynamic "waf_configuration" {
     for_each = var.waf_configuration != null ? [var.waf_configuration] : []
     content {

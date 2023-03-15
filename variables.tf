@@ -103,6 +103,24 @@ variable "ssl_certificates" {
   default = []
 }
 
+variable "authentication_certificates" {
+  description = "Authentication certificates to allow the backend with Azure Application Gateway"
+  type = list(object({
+    name = string
+    data = string
+  }))
+  default = []
+}
+
+variable "trusted_root_certificates" {
+  description = "Trusted root certificates to allow the backend with Azure Application Gateway"
+  type = list(object({
+    name = string
+    data = string
+  }))
+  default = []
+}
+
 variable "waf_configuration" {
   description = "Web Application Firewall support for your Azure Application Gateway"
   type = object({
