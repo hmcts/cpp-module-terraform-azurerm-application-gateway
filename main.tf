@@ -23,10 +23,10 @@ resource "azurerm_resource_group" "rg1" {
 # }
 
 
-data "azurerm_subnet" "backend_subnet" {
-  virtual_network_name = data.azurerm_virtual_network.backend_virtual_network.name
-  resource_group_name  = data.azurerm_virtual_network.backend_virtual_network.resource_group_name
-}
+# data "azurerm_subnet" "backend_subnet" {
+#   virtual_network_name = data.azurerm_virtual_network.backend_virtual_network.name
+#   resource_group_name  = data.azurerm_virtual_network.backend_virtual_network.resource_group_name
+# }
 module "tag_set" {
   source         = "git::https://github.com/hmcts/cpp-module-terraform-azurerm-tag-generator.git?ref=main"
   namespace      = var.namespace
