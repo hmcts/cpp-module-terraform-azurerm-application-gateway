@@ -20,16 +20,6 @@ variable "app_gateway_name" {
 }
 
 
-variable "enable_http2" {
-  description = "Is HTTP2 enabled on the application gateway resource?"
-  default     = false
-}
-
-variable "zones" {
-  description = "A collection of availability zones to spread the Application Gateway over."
-  type        = list(string)
-  default     = [] #["1", "2", "3"]
-}
 variable "frontend_resource_group_name" {
   type        = string
   default     = ""
@@ -95,10 +85,7 @@ variable "zones" {
   default     = [] #["1", "2", "3"]
 }
 
-variable "firewall_policy_id" {
-  description = "The ID of the Web Application Firewall Policy which can be associated with app gateway"
-  default     = null
-}
+
 
 variable "ssl_policy" {
   description = "Application Gateway SSL configuration"
@@ -168,23 +155,7 @@ variable "firewall_policy_id" {
   default     = null
 }
 
-variable "sku" {
-  description = "The sku pricing model of v1 and v2"
-  type = object({
-    name     = string
-    tier     = string
-    capacity = optional(number)
-  })
-}
 
-variable "autoscale_configuration" {
-  description = "Minimum or Maximum capacity for autoscaling. Accepted values are for Minimum in the range 0 to 100 and for Maximum in the range 2 to 125"
-  type = object({
-    min_capacity = number
-    max_capacity = optional(number)
-  })
-  default = null
-}
 
 variable "private_ip_address" {
   description = "Private IP Address to assign to the Load Balancer."
