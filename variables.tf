@@ -260,46 +260,7 @@ variable "identity_ids" {
   default     = null
 }
 
-variable "authentication_certificates" {
-  description = "Authentication certificates to allow the backend with Azure Application Gateway"
-  type = list(object({
-    name = string
-    data = string
-  }))
-  default = []
-}
 
-variable "trusted_root_certificates" {
-  description = "Trusted root certificates to allow the backend with Azure Application Gateway"
-  type = list(object({
-    name = string
-    data = string
-  }))
-  default = []
-}
-
-variable "ssl_policy" {
-  description = "Application Gateway SSL configuration"
-  type = object({
-    disabled_protocols   = optional(list(string))
-    policy_type          = optional(string)
-    policy_name          = optional(string)
-    cipher_suites        = optional(list(string))
-    min_protocol_version = optional(string)
-  })
-  default = null
-}
-
-variable "ssl_certificates" {
-  description = "List of SSL certificates data for Application gateway"
-  type = list(object({
-    name                = string
-    data                = optional(string)
-    password            = optional(string)
-    key_vault_secret_id = optional(string)
-  }))
-  default = []
-}
 
 variable "health_probes" {
   description = "List of Health probes used to test backend pools health."
@@ -360,26 +321,7 @@ variable "rewrite_rule_set" {
   default     = []
 }
 
-variable "waf_configuration" {
-  description = "Web Application Firewall support for your Azure Application Gateway"
-  type = object({
-    firewall_mode            = string
-    rule_set_version         = string
-    file_upload_limit_mb     = optional(number)
-    request_body_check       = optional(bool)
-    max_request_body_size_kb = optional(number)
-    disabled_rule_group = optional(list(object({
-      rule_group_name = string
-      rules           = optional(list(string))
-    })))
-    exclusion = optional(list(object({
-      match_variable          = string
-      selector_match_operator = optional(string)
-      selector                = optional(string)
-    })))
-  })
-  default = null
-}
+
 ############
 # TAGGING  #
 ############
