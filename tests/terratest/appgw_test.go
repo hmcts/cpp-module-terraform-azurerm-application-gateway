@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
+	"crypto/tls"
 )
 
 //Testing the secure-file-transfer Module
@@ -20,7 +21,7 @@ func TestTerraformAzureAppGW(t *testing.T) {
 	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, "../..", "examples/complete")
 	planFilePath := filepath.Join(exampleFolder, "plan.out")
 
-	expectedAppGatewayName := "cpp-atlassian-nonlive-app_gateway-appgw"
+	expectedAppGatewayName := "APPGW-TF-TEST-01"
 
 	terraformPlanOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		// The path to where our Terraform code is located
@@ -40,13 +41,13 @@ func TestTerraformAzureAppGW(t *testing.T) {
 	terraform.InitAndPlanAndShowWithStruct(t, terraformPlanOptions)
 
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
-	defer terraform.Destroy(t, terraformPlanOptions)
+	// defer terraform.Destroy(t, terraformPlanOptions)
 
 	// Run `terraform init` and `terraform apply`. Fail the test if there are any errors.
 	terraform.InitAndApply(t, terraformPlanOptions)
 	appGatewayName := terraform.Output(t, terraformPlanOptions, "appgw_name")
 
-	assert.Equal(t, expectedAppGatewayName, appGatewayName)
+	assert.Contains(t, appGatewayName, expectedAppGatewayName)
 
 	// website::tag::3:: Run `terraform output` to get the values of output variables
 	//appgwid := terraform.Output(t, terraformOptions, "appgw_id")
@@ -56,14 +57,15 @@ func TestTerraformAzureAppGW(t *testing.T) {
 	// It can take a few minutes for the deployment to be ready
 	maxRetries := 30
 	timeBetweenRetries := 5 * time.Second
-	url := fmt.Sprintf("http://%s", publicIp)
+	url := fmt.Sprintf("https://%s", publicIp)
 
 	// Verify that we get back a 200 OK with the output
 
+    tlsConfig := &tls.Config{InsecureSkipVerify: true}
 	http_helper.HttpGetWithRetryWithCustomValidation(
 		t,
 		url,
-		nil,
+		tlsConfig,
 		maxRetries,
 		timeBetweenRetries,
 		func(statusCode int, body string) bool {

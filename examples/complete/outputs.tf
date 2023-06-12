@@ -15,7 +15,7 @@ output "appgw_public_ip_address" {
 
 output "backend_subnet_id" {
   description = "The backend subnet id"
-  value       = module.appgw_terratest.backend_subnet_id
+  value       = module.test_backend_subnet.id
 }
 
 output "backend_address_pool_id" {
