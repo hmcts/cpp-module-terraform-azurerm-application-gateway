@@ -417,7 +417,7 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
   eventhub_authorization_rule_id = each.value.eventhub_authorization_rule_id
 
   dynamic "enabled_log" {
-    for_each = each.value.enabled_logs
+    for_each = each.value.enabled_logs != null ? each.value.enabled_logs : []
     content {
       category       = enabled_log.value.category
       category_group = enabled_log.value.category_group
@@ -429,7 +429,7 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
   }
 
   dynamic "log" {
-    for_each = each.value.logs
+    for_each = each.value.logs != null ? each.value.logs : []
     content {
       category       = log.value.category
       category_group = log.value.category_group
@@ -441,7 +441,7 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
   }
 
   dynamic "metric" {
-    for_each = each.value.metrics
+    for_each = each.value.metrics != null ? each.value.metrics : []
     content {
       category = metric.value.category
       retention_policy {
