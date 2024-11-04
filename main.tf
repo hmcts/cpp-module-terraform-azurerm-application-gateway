@@ -428,7 +428,7 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
     }
   }
 
-  dynamic "log" {
+  dynamic "enabled_log" {
     for_each = each.value.logs != null ? each.value.logs : []
     content {
       category       = log.value.category
