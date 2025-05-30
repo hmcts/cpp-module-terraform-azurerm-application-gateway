@@ -35,4 +35,31 @@ locals {
   gateway_ip_configuration_name       = "${lower(var.name)}-gwip"
   frontend_ip_configuration_name      = "${lower(var.name)}-fepip"
   frontend_priv_ip_configuration_name = "${lower(var.name)}-feprivpip"
+
+  frontend_public_ip_config_name  = "frontend_public_ip_configuration"
+  frontend_private_ip_config_name = "frontend_private_ip_configuration"
+
+  frontend_ip_configurations = flatten([
+    # Public IP configuration (if provided)
+    var.frontend_public_ip_address != null ? [
+      {
+        config_block_name            = local.frontend_public_ip_config_name
+        public_ip_id                 = var.frontend_public_ip_address.id
+        private_ip                   = null
+        private_ip_allocation_method = null
+        subnet_id                    = null
+      }
+    ] : [],
+
+    # Private IP configuration (if provided)
+    var.appgw_private ? [
+      {
+        config_block_name            = local.frontend_private_ip_config_name
+        public_ip_id                 = null
+        private_ip                   = var.appgw_private_ip
+        private_ip_allocation_method = "Static"
+        subnet_id                    = var.subnet_id
+      }
+    ] : []
+  ])
 }
