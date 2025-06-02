@@ -20,11 +20,6 @@ variable "subnet_id" {
   default     = ""
 }
 
-variable "frontend_public_ip_address" {
-  description = "Frontend public IP address"
-  type        = map(string)
-  default     = {}
-}
 
 variable "appgw_private" {
   description = "Boolean variable to create a private Application Gateway. When `true`, the default http listener will listen on private IP instead of the public IP."
@@ -186,24 +181,6 @@ variable "frontend_public_ip_address" {
   default = null
 }
 
-variable "appgw_private" {
-  description = "Is the application gateway private?"
-  type        = bool
-  default     = false
-}
-
-variable "appgw_private_ip" {
-  description = "Private IP address to assign to the Application Gateway. Required if appgw_private is true."
-  type        = string
-  default     = null
-}
-
-variable "subnet_id" {
-  description = "The ID of the subnet where the Application Gateway will be deployed. Required if appgw_private is true."
-  type        = string
-  default     = null
-
-}
 
 variable "ssl_policy" {
   description = "Application Gateway SSL configuration. The list of available policies can be found here: https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_gateway#disabled_protocols"
