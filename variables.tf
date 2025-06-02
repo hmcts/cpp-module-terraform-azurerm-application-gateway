@@ -1,4 +1,4 @@
-variable "name" {
+avariable "name" {
   type        = string
   description = "The name of the Application Gateway."
 }
@@ -24,6 +24,18 @@ variable "frontend_public_ip_address" {
   description = "Frontend public IP address"
   type        = map(string)
   default     = {}
+}
+
+variable "frontend_type" {
+  description = "Type of the frontend IP, public/private."
+  type        = string
+  default     = "public"
+}
+
+variable "private_ip_address_allocation" {
+  description = "Type of the frontend IP allocation"
+  type        = string
+  default     = "Static"
 }
 
 variable "appgw_private" {
