@@ -34,18 +34,21 @@ resource "azurerm_application_gateway" "app_gateway" {
   }
 
 
-  frontend_ip_configuration {
-    name                 = local.frontend_ip_configuration_name
-    public_ip_address_id = var.frontend_public_ip_address.id
+  dynamic "frontend_ip_configuration" {
+    for_each = var.frontend_type == "public" ? [1] : []
+    content {
+      name                 = local.frontend_ip_configuration_name
+      public_ip_address_id = var.frontend_public_ip_address.id
+    }
   }
 
   dynamic "frontend_ip_configuration" {
-    for_each = var.appgw_private ? ["enabled"] : []
+    for_each = var.frontend_type == "private" ? [1] : []
     content {
-      name                          = local.frontend_priv_ip_configuration_name
-      private_ip_address_allocation = var.appgw_private ? "Static" : null
-      private_ip_address            = var.appgw_private ? var.appgw_private_ip : null
-      subnet_id                     = var.appgw_private ? var.subnet_id : null
+      name                          = local.frontend_ip_configuration_name
+      subnet_id                     = var.subnet_id
+      private_ip_address            = var.private_ip_address
+      private_ip_address_allocation = var.appgw_private
     }
   }
 

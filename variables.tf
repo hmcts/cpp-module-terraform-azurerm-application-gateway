@@ -413,3 +413,9 @@ variable "diagnostic_settings" {
   }))
   default = []
 }
+
+variable "frontend_type" {
+  description = "The type of frontend for the Application Gateway. Can be 'public' or 'private'."
+  type        = string
+  default     = "public"
+}
