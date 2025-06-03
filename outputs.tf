@@ -10,7 +10,7 @@ output "appgw_name" {
 
 output "appgw_public_ip_address" {
   description = "The public IP address of Application Gateway."
-  value       = var.frontend_public_ip_address.ip_address
+  value       = var.frontend_type == "public" ? var.frontend_public_ip_address.ip_address : null
 }
 
 output "backend_address_pool_id" {
