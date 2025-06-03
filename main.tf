@@ -431,17 +431,17 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
     }
   }
 
-  dynamic "log" {
-    for_each = each.value.logs != null ? each.value.logs : []
-    content {
-      category       = log.value.category
-      category_group = log.value.category_group
-      retention_policy {
-        enabled = log.value.retention_policy.enabled
-        days    = log.value.retention_policy.days
-      }
-    }
-  }
+  # dynamic "log" {
+  #   for_each = each.value.logs != null ? each.value.logs : []
+  #   content {
+  #     category       = log.value.category
+  #     category_group = log.value.category_group
+  #     retention_policy {
+  #       enabled = log.value.retention_policy.enabled
+  #       days    = log.value.retention_policy.days
+  #     }
+  #   }
+  # }
 
   dynamic "metric" {
     for_each = each.value.metrics != null ? each.value.metrics : []
