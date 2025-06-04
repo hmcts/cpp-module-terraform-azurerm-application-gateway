@@ -26,6 +26,18 @@ variable "frontend_public_ip_address" {
   default     = {}
 }
 
+variable "frontend_type" {
+  description = "Type of the frontend IP, public/private."
+  type        = string
+  default     = "public"
+}
+
+variable "private_ip_address_allocation" {
+  description = "Type of the frontend IP allocation"
+  type        = string
+  default     = "Static"
+}
+
 variable "appgw_private" {
   description = "Boolean variable to create a private Application Gateway. When `true`, the default http listener will listen on private IP instead of the public IP."
   type        = bool
