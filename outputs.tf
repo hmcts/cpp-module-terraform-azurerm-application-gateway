@@ -17,3 +17,8 @@ output "backend_address_pool_id" {
   description = "The backend address pool id"
   value       = azurerm_application_gateway.app_gateway.backend_address_pool.*.id
 }
+
+
+output "debug_backend_address_pools" {
+  value = var.backend_address_pools
+}
