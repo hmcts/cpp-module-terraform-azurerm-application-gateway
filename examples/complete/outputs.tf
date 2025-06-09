@@ -8,11 +8,6 @@ output "appgw_name" {
   value       = module.appgw_terratest.appgw_name
 }
 
-output "appgw_public_ip_address" {
-  description = "The public IP address of Application Gateway."
-  value       = module.appgw_terratest.appgw_public_ip_address
-}
-
 output "backend_subnet_id" {
   description = "The backend subnet id"
   value       = module.test_backend_subnet.id
