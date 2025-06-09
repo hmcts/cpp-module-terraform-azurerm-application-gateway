@@ -1,5 +1,5 @@
 locals {
-  # https://docs.microsoft.com/en-gb/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway#exposing-the-developer-portal-externally-through-application-gateway
+  # https://docs.microsoft.com/en-gb/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway#exposing-the-developer-portal-externally-through-application-gateway-test
   disabled_rule_group_settings_dev_portal = [
     {
       rule_group_name = "REQUEST-942-APPLICATION-ATTACK-SQLI"
