@@ -413,3 +413,9 @@ variable "diagnostic_settings" {
   }))
   default = []
 }
+
+variable "create_appgw_pip" {
+  type        = bool
+  description = "Create a public IP for the Application Gateway."
+  default     = true
+}

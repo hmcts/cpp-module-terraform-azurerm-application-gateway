@@ -34,16 +34,19 @@ resource "azurerm_application_gateway" "app_gateway" {
   }
 
 
-  frontend_ip_configuration {
-    name                 = local.frontend_ip_configuration_name
-    public_ip_address_id = var.frontend_public_ip_address.id
+  dynamic "frontend_ip_configuration" {
+    for_each = var.create_appgw_pip ? ["enabled"] : []
+    content {
+      name                 = local.frontend_ip_configuration_name
+      public_ip_address_id = var.create_appgw_pip ? var.frontend_public_ip_address.id : null
+    }
   }
 
   dynamic "frontend_ip_configuration" {
     for_each = var.appgw_private ? ["enabled"] : []
     content {
       name                          = local.frontend_priv_ip_configuration_name
-      private_ip_address_allocation = var.appgw_private ? "Static" : null
+      private_ip_address_allocation = var.appgw_private_ip != null ? "Static" : null
       private_ip_address            = var.appgw_private ? var.appgw_private_ip : null
       subnet_id                     = var.appgw_private ? var.subnet_id : null
     }
@@ -230,7 +233,7 @@ resource "azurerm_application_gateway" "app_gateway" {
     for_each = var.trusted_root_certificates
     content {
       name = trusted_root_certificate.value.name
-      data = filebase64(trusted_root_certificate.value.data)
+      data = base64encode(trusted_root_certificate.value.data)
     }
   }
 
@@ -424,18 +427,6 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
       retention_policy {
         enabled = enabled_log.value.retention_policy.enabled
         days    = enabled_log.value.retention_policy.days
-      }
-    }
-  }
-
-  dynamic "log" {
-    for_each = each.value.logs != null ? each.value.logs : []
-    content {
-      category       = log.value.category
-      category_group = log.value.category_group
-      retention_policy {
-        enabled = log.value.retention_policy.enabled
-        days    = log.value.retention_policy.days
       }
     }
   }
