@@ -233,7 +233,7 @@ resource "azurerm_application_gateway" "app_gateway" {
     for_each = var.trusted_root_certificates
     content {
       name = trusted_root_certificate.value.name
-      data = filebase64(trusted_root_certificate.value.data)
+      data = base64(trusted_root_certificate.value.data)
     }
   }
 
