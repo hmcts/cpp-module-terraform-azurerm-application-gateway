@@ -442,3 +442,90 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
     }
   }
 }
+
+resource "null_resource" "azure_cli_login" {
+  count = length(var.tcp_proxy_settings) > 0 ? 1 : 0
+
+  provisioner "local-exec" {
+    command     = <<EOC
+      az login --service-principal \
+        --username=$ARM_CLIENT_ID \
+        --tenant=$ARM_TENANT_ID \
+        --federated-token=$ARM_OIDC_TOKEN \
+        --allow-no-subscriptions
+    EOC
+    interpreter = ["/bin/bash", "-c"]
+  }
+
+  triggers = {
+    always_run = uuid()
+  }
+}
+
+resource "null_resource" "tcp_listeners" {
+  for_each = var.tcp_proxy_settings
+
+  provisioner "local-exec" {
+    command     = <<EOC
+      az network application-gateway listener create \
+        --gateway-name ${var.name} \
+        --resource-group ${var.resource_group_name} \
+        --name ${each.key} \
+        --frontend-port ${each.value.frontend_port_name} \
+        --frontend-ip ${local.frontend_priv_ip_configuration_name} \
+    EOC
+    interpreter = ["/bin/bash", "-c"]
+  }
+
+  depends_on = [
+    null_resource.azure_cli_login,
+    azurerm_application_gateway.app_gateway
+  ]
+}
+
+resource "null_resource" "tcp_settings" {
+  for_each = var.tcp_proxy_settings
+
+  provisioner "local-exec" {
+    command     = <<EOC
+      az network application-gateway settings create \
+        --gateway-name ${var.name} \
+        --resource-group ${var.resource_group_name} \
+        --name ${each.value.backend_setting_name} \
+        --port ${each.value.backend_port} \
+        --protocol Tcp
+    EOC
+    interpreter = ["/bin/bash", "-c"]
+  }
+
+  depends_on = [
+    null_resource.azure_cli_login,
+    null_resource.tcp_listeners,
+    azurerm_application_gateway.app_gateway
+  ]
+}
+
+resource "null_resource" "routing_rules" {
+  for_each = var.tcp_proxy_settings
+
+  provisioner "local-exec" {
+    command     = <<EOC
+      az network application-gateway routing-rule create \
+        --gateway-name ${var.name} \
+        --resource-group ${var.resource_group_name} \
+        --name ${each.value.routing_rule_name} \
+        --rule-type Basic \
+        --listener ${each.key} \
+        --address-pool ${each.value.backend_pool_name} \
+        --settings ${each.value.backend_setting_name} \
+        --priority ${each.value.routing_rule_priority}
+    EOC
+    interpreter = ["/bin/bash", "-c"]
+  }
+
+  depends_on = [
+    null_resource.tcp_listeners,
+    null_resource.tcp_settings,
+    azurerm_application_gateway.app_gateway
+  ]
+}
