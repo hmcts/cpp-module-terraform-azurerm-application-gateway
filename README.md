@@ -9,6 +9,7 @@ rements
 | Name | Version |
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | n/a |
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 
 ## Resources
 
@@ -16,6 +17,11 @@ rements
 |------|------|
 | [azurerm_application_gateway.app_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_gateway) | resource |
 | [azurerm_monitor_diagnostic_setting.app_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_diagnostic_setting) | resource |
+| [null_resource.azure_cli_login](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.routing_rules](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.tcp_listeners](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.tcp_probes](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.tcp_settings](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 
 ## Inputs
 
@@ -51,6 +57,7 @@ rements
 | <a name="input_ssl_profile"></a> [ssl\_profile](#input\_ssl\_profile) | Application Gateway SSL profile. Default profile is used when this variable is set to null. https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_gateway#name | <pre>object({<br/>    name                             = string<br/>    trusted_client_certificate_names = optional(list(string), [])<br/>    verify_client_cert_issuer_dn     = optional(bool, false)<br/>    ssl_policy = optional(object({<br/>      disabled_protocols   = optional(list(string), [])<br/>      policy_type          = optional(string, "Predefined")<br/>      policy_name          = optional(string, "AppGwSslPolicy20170401S")<br/>      cipher_suites        = optional(list(string), [])<br/>      min_protocol_version = optional(string, "TLSv1_2")<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID for attaching the Application Gateway. | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A mapping of tags to assign to the resource. | `map(string)` | `{}` | no |
+| <a name="input_tcp_proxy_settings"></a> [tcp\_proxy\_settings](#input\_tcp\_proxy\_settings) | This uses null\_resource and az cli to provision. This is a preview feature and TCP proxy is not available yet with azurerm provider. | <pre>map(object({<br/>    backend_port          = number<br/>    frontend_port_name    = string<br/>    backend_pool_name     = string<br/>    backend_setting_name  = string<br/>    probe_name            = string<br/>    routing_rule_name     = string<br/>    routing_rule_priority = number<br/>  }))</pre> | `{}` | no |
 | <a name="input_trusted_root_certificates"></a> [trusted\_root\_certificates](#input\_trusted\_root\_certificates) | Trusted root certificates to allow the backend with Azure Application Gateway | <pre>list(object({<br/>    name = string<br/>    data = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_url_path_maps"></a> [url\_path\_maps](#input\_url\_path\_maps) | List of objects with URL path map configurations. | <pre>list(object({<br/>    name = string<br/><br/>    default_backend_address_pool_name   = optional(string)<br/>    default_redirect_configuration_name = optional(string)<br/>    default_backend_http_settings_name  = optional(string)<br/>    default_rewrite_rule_set_name       = optional(string)<br/><br/>    path_rules = list(object({<br/>      name = string<br/><br/>      backend_address_pool_name  = optional(string)<br/>      backend_http_settings_name = optional(string)<br/>      rewrite_rule_set_name      = optional(string)<br/><br/>      paths = optional(list(string), [])<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_user_assigned_identity_id"></a> [user\_assigned\_identity\_id](#input\_user\_assigned\_identity\_id) | User assigned identity id assigned to this resource. | `string` | `null` | no |
