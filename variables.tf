@@ -420,20 +420,17 @@ variable "create_appgw_pip" {
   default     = true
 }
 
-# This uses null_resource and az cli to provision. 
+# This uses null_resource and az cli to provision.
 # This is a preview feature and TCP proxy is not available yet with azurerm provider.
 variable "tcp_proxy_settings" {
   type = map(object({
-    backend_port            = number
-    frontend_port_name      = string
-    backend_pool_name       = string
-    backend_setting_name    = string
-    probe_name              = string
-    routing_rule_name       = string
-    routing_rule_priority   = number
+    backend_port          = number
+    frontend_port_name    = string
+    backend_pool_name     = string
+    backend_setting_name  = string
+    probe_name            = string
+    routing_rule_name     = string
+    routing_rule_priority = number
   }))
   default = {}
 }
-
-
-

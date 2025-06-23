@@ -452,7 +452,7 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
 #---------------------------------------------------------------------
 # TCP Proxy setting - This is a preview feature and not supported
 # by azurerm provider.
-# https://github.com/hashicorp/terraform-provider-azurerm/issues/26239 
+# https://github.com/hashicorp/terraform-provider-azurerm/issues/26239
 #---------------------------------------------------------------------
 resource "null_resource" "azure_cli_login" {
   count = length(var.tcp_proxy_settings) > 0 ? 1 : 0
@@ -498,7 +498,7 @@ resource "null_resource" "tcp_probes" {
   for_each = var.tcp_proxy_settings
 
   provisioner "local-exec" {
-    command = <<EOC
+    command     = <<EOC
       az network application-gateway probe create \
         --gateway-name ${var.name} \
         --resource-group ${var.resource_group_name} \
