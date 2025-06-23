@@ -428,6 +428,7 @@ variable "tcp_proxy_settings" {
     frontend_port_name      = string
     backend_pool_name       = string
     backend_setting_name    = string
+    probe_name              = string
     routing_rule_name       = string
     routing_rule_priority   = number
   }))

@@ -483,6 +483,27 @@ resource "null_resource" "tcp_listeners" {
   ]
 }
 
+resource "null_resource" "tcp_probes" {
+  for_each = var.tcp_proxy_settings
+
+  provisioner "local-exec" {
+    command = <<EOC
+      az network application-gateway probe create \
+        --gateway-name ${var.name} \
+        --resource-group ${var.resource_group_name} \
+        --name ${each.value.probe_name} \
+        --protocol Tcp \
+        --port ${each.value.backend_port}
+    EOC
+    interpreter = ["/bin/bash", "-c"]
+  }
+
+  depends_on = [
+    null_resource.azure_cli_login,
+    azurerm_application_gateway.app_gateway
+  ]
+}
+
 resource "null_resource" "tcp_settings" {
   for_each = var.tcp_proxy_settings
 
@@ -493,6 +514,7 @@ resource "null_resource" "tcp_settings" {
         --resource-group ${var.resource_group_name} \
         --name ${each.value.backend_setting_name} \
         --port ${each.value.backend_port} \
+        --probe ${each.value.probe_name} \
         --protocol Tcp
     EOC
     interpreter = ["/bin/bash", "-c"]
@@ -501,6 +523,7 @@ resource "null_resource" "tcp_settings" {
   depends_on = [
     null_resource.azure_cli_login,
     null_resource.tcp_listeners,
+    null_resource.tcp_probes,
     azurerm_application_gateway.app_gateway
   ]
 }
@@ -526,6 +549,7 @@ resource "null_resource" "routing_rules" {
   depends_on = [
     null_resource.tcp_listeners,
     null_resource.tcp_settings,
+    null_resource.tcp_probes,
     azurerm_application_gateway.app_gateway
   ]
 }
