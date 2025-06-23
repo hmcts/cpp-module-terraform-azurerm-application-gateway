@@ -476,6 +476,12 @@ resource "null_resource" "azure_cli_login" {
 resource "null_resource" "tcp_listeners" {
   for_each = var.tcp_proxy_settings
 
+  triggers = {
+    listener_name      = each.key
+    frontend_port_name = each.value.frontend_port_name
+    frontend_ip_config = local.frontend_priv_ip_configuration_name
+  }
+
   provisioner "local-exec" {
     command     = <<EOC
       az network application-gateway listener create \
@@ -483,7 +489,7 @@ resource "null_resource" "tcp_listeners" {
         --resource-group ${var.resource_group_name} \
         --name ${each.key} \
         --frontend-port ${each.value.frontend_port_name} \
-        --frontend-ip ${local.frontend_priv_ip_configuration_name} \
+        --frontend-ip ${local.frontend_priv_ip_configuration_name}
     EOC
     interpreter = ["/bin/bash", "-c"]
   }
@@ -496,6 +502,12 @@ resource "null_resource" "tcp_listeners" {
 
 resource "null_resource" "tcp_probes" {
   for_each = var.tcp_proxy_settings
+
+  triggers = {
+    probe_name     = each.value.probe_name
+    backend_port   = each.value.backend_port
+    probe_protocol = "Tcp"
+  }
 
   provisioner "local-exec" {
     command     = <<EOC
@@ -517,6 +529,12 @@ resource "null_resource" "tcp_probes" {
 
 resource "null_resource" "tcp_settings" {
   for_each = var.tcp_proxy_settings
+
+  triggers = {
+    setting_name = each.value.backend_setting_name
+    probe_name   = each.value.probe_name
+    port         = each.value.backend_port
+  }
 
   provisioner "local-exec" {
     command     = <<EOC
@@ -541,6 +559,14 @@ resource "null_resource" "tcp_settings" {
 
 resource "null_resource" "routing_rules" {
   for_each = var.tcp_proxy_settings
+
+  triggers = {
+    rule_name   = each.value.routing_rule_name
+    listener    = each.key
+    backend_set = each.value.backend_setting_name
+    pool        = each.value.backend_pool_name
+    priority    = each.value.routing_rule_priority
+  }
 
   provisioner "local-exec" {
     command     = <<EOC
