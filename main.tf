@@ -402,6 +402,12 @@ resource "azurerm_application_gateway" "app_gateway" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [
+      probe
+    ]
+  }
+
   tags = var.tags
 }
 
@@ -443,6 +449,11 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
   }
 }
 
+#---------------------------------------------------------------------
+# TCP Proxy setting - This is a preview feature and not supported
+# by azurerm provider.
+# https://github.com/hashicorp/terraform-provider-azurerm/issues/26239 
+#---------------------------------------------------------------------
 resource "null_resource" "azure_cli_login" {
   count = length(var.tcp_proxy_settings) > 0 ? 1 : 0
 
