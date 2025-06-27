@@ -402,6 +402,21 @@ resource "azurerm_application_gateway" "app_gateway" {
     }
   }
 
+  dynamic "private_link_configuration" {
+    for_each = var.privatelink != null ? [var.privatelink] : []
+    content {
+      name = private_link_configuration.value.name
+
+      ip_configuration {
+        name                          = private_link_configuration.value.ip_configuration_name
+        subnet_id                     = private_link_configuration.value.subnet_id
+        private_ip_address_allocation = lookup(private_link_configuration.value, "private_ip_address", null) != null ? "Static" : "Dynamic"
+        private_ip_address            = lookup(private_link_configuration.value, "private_ip_address", null)
+        primary                       = true
+      }
+    }
+  }
+
   tags = var.tags
 }
 
@@ -441,4 +456,5 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway" {
       }
     }
   }
+
 }

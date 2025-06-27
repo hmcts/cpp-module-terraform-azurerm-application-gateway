@@ -419,3 +419,14 @@ variable "create_appgw_pip" {
   description = "Create a public IP for the Application Gateway."
   default     = true
 }
+
+variable "privatelink" {
+  description = "Private Link config for Application Gateway (optional)"
+  type = object({
+    name                  = string
+    ip_configuration_name = string
+    subnet_id             = string
+    private_ip_address    = optional(string)
+  })
+  default = null
+}
